@@ -5,8 +5,11 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
+
+import comparator.CompareToDistance;
 
 public class Grafo<E> {
 	private Hashtable<E,Node> nodes;
@@ -187,12 +190,41 @@ public class Grafo<E> {
         return out;
     }
 	
+	public Queue<Node> dijkstra (E source) {
+		Queue<Node> out = new LinkedList<>();
+		Node root = nodes.get(source);
+		PriorityQueue<Node> queue = new PriorityQueue<>(Integer.MAX_VALUE, new CompareToDistance());
+		Collection<Node> v = nodes.values();
+		for(Node i:v) {
+			i.setDistance(Integer.MAX_VALUE);
+			i.setPrev(null);
+		}
+		root.setDistance(0);
+		queue.add(root);
+		while(queue.isEmpty() == false) {
+			Node u = queue.poll();
+			out.add(u);
+			List<Arista> ad = u.getAd();
+			for(Arista i:ad) {
+				Node n = i.getB();
+				if (n.getDistance() > u.getDistance() + i.getW()) {
+					n.setDistance(u.getDistance() + i.getW());
+					n.setPrev(u);
+					queue.add(n);
+				}
+			}
+		}
+		return out;
+	}
+	
 	
 	
 	public class Node{
 		private E element;
 		private List<Arista> adyacentes;
 		private Color color;
+		private int distance;
+		private Node previous;
 		
 		
 		public Node() {
@@ -224,6 +256,20 @@ public class Grafo<E> {
 		
 		public void setColor(Color color) {
 			this.color = color;
+		}
+		
+		public void setDistance(int distance) {
+			this.distance = distance;
+		}
+		public int getDistance() {
+			return distance;
+		}
+		
+		public void setPrev(Node previous) {
+			this.previous = previous;
+		}
+		public Node getPrev() {
+			return previous;
 		}
 		
 		public String toString() {
