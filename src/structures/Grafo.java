@@ -193,7 +193,7 @@ public class Grafo<E> {
 	public Queue<Node> dijkstra (E source) {
 		Queue<Node> out = new LinkedList<>();
 		Node root = nodes.get(source);
-		PriorityQueue<Node> queue = new PriorityQueue<>(Integer.MAX_VALUE, new CompareToDistance());
+		PriorityQueue<Node> queue = new PriorityQueue<>(50, new CompareToDistance());
 		Collection<Node> v = nodes.values();
 		for(Node i:v) {
 			i.setDistance(Integer.MAX_VALUE);
@@ -205,14 +205,17 @@ public class Grafo<E> {
 			Node u = queue.poll();
 			out.add(u);
 			List<Arista> ad = u.getAd();
-			for(Arista i:ad) {
-				Node n = i.getB();
-				if (n.getDistance() > u.getDistance() + i.getW()) {
-					n.setDistance(u.getDistance() + i.getW());
-					n.setPrev(u);
-					queue.add(n);
+			if(ad.size()>0) {
+				for(Arista i:ad) {
+					Node n = i.getB();
+					if (n.getDistance() > u.getDistance() + i.getW()) {
+						n.setDistance(u.getDistance() + i.getW());
+						n.setPrev(u);
+						queue.add(n);
+					}
 				}
 			}
+			
 		}
 		return out;
 	}

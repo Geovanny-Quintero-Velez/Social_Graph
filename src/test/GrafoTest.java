@@ -7,6 +7,7 @@ import java.util.Queue;
 import org.junit.jupiter.api.Test;
 
 import structures.Grafo;
+import structures.Grafo.Node;
 
 class GrafoTest {
 	static Grafo<String> g;
@@ -47,7 +48,24 @@ class GrafoTest {
 		g.addArista(b, a);
 	}
 	
-	
+	void scenario4() {
+		String a="1";
+		String b="2";
+		String c="3";
+		String d="4";
+		String e="5";
+		g=new Grafo<>();
+		g.addVertice(a);
+		g.addVertice(b);
+		g.addVertice(c);
+		g.addVertice(d);
+		g.addVertice(e);
+		g.addArista(a, b, 4);
+		g.addArista(b, c, 1);
+		g.addArista(c, d, 2);
+		g.addArista(e, c, 1);
+		g.addArista(a, e, 3);
+	}
 
 	@Test
 	void testAddVertice() {
@@ -156,6 +174,13 @@ class GrafoTest {
 		scenario3();
 		Queue<String> toTest=g.BFS("1");
 		assertEquals(toTest.size(),3);
+	}
+	
+	@Test
+	void testDijkstra() {
+		scenario4();
+		Queue<Grafo<String>.Node> toTest = g.dijkstra("1");
+		assertEquals(toTest.size(),5);
 	}
 
 }
