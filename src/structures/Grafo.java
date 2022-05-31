@@ -205,7 +205,7 @@ public class Grafo<E> {
 			Node u = queue.poll();
 			out.add(u);
 			List<Arista> ad = u.getAd();
-			if(ad.size()>0) {
+			if(ad!=null) {
 				for(Arista i:ad) {
 					Node n = i.getB();
 					if (n.getDistance() > u.getDistance() + i.getW()) {
