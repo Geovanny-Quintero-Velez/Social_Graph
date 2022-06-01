@@ -19,11 +19,19 @@ public class Main {
 		g.addVertice(d);
 		g.addVertice(e);
 		g.addArista(a, b, 4);
+		g.addArista(b, a, 4);
 		g.addArista(b, c, 1);
+		g.addArista(c, b, 1);
 		g.addArista(c, d, 2);
+		g.addArista(d, c, 2);
 		g.addArista(e, c, 1);
 		g.addArista(a, e, 3);
-		Queue<Grafo<String>.Node> toTest = g.dijkstra("1");
-		System.out.println(toTest.size());
+		g.addArista(c, e, 1);
+		g.addArista(e, a, 3);
+		Grafo<Grafo<String>.Node> toTest = g.prim("1");
+		for(int i=1;i<6;i++) {
+			Grafo<Grafo<String>.Node>.Node node=toTest.getVert(g.getVert(i+""));
+			System.out.println(node.get()+" "+node.getDistance());
+		}
 	}
 }

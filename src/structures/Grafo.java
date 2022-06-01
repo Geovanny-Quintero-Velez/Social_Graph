@@ -2,6 +2,7 @@ package structures;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +20,10 @@ public class Grafo<E> {
 		nodes=new Hashtable<>();
 		amountVertices=0;
 		amountAristas=0;
+	}
+	
+	public int size() {
+		return nodes.size();
 	}
 	
 	public void addVertice(E element) {
@@ -40,6 +45,10 @@ public class Grafo<E> {
 	
 	public boolean isVert(E e1) {
 		return nodes.get(e1)!=null;
+	}
+	
+	public Node getVert(E e1) {
+		return nodes.get(e1);
 	}
 	
 	public boolean isArista(E n1,E n2) {
@@ -145,6 +154,8 @@ public class Grafo<E> {
 		return false;
 	}
 	
+	
+	
 	public boolean addArista(E element1, E element2,int w) {
 		Node node1=nodes.get(element1);
 		Node node2=nodes.get(element2);
@@ -160,10 +171,17 @@ public class Grafo<E> {
 	
 	public Queue<E> BFS(E s)
     {
+		Collection<Node> a=nodes.values();
+        for(Node i:a) {
+        	i.setColor(Color.WHITE);
+        	i.setDistance(0);
+        	i.setPrev(null);
+        }
 		Node root=nodes.get(s);
         LinkedList<Node> queue = new LinkedList<>();
         Queue<E> out = new LinkedList<>();
         root.setColor(Color.BLACK);
+        root.setDistance(0);
         queue.add(root);
         while (queue.size() != 0)
         {
@@ -174,26 +192,94 @@ public class Grafo<E> {
             	for(Arista i:list) {
             		Node n=i.getB();
             		if(n.getColor()!=Color.BLACK) {
+            			
             			 n.setColor(Color.BLACK);
                          queue.add(n);
             		}
             	}
             }
         }
-        
-        Collection<Node> a=nodes.values();
-        
-        for(Node i:a) {
-        	i.setColor(Color.WHITE);
-        }
-        
         return out;
     }
+	
+	public Grafo<Node> prim(E s) {
+		Node root=nodes.get(s);
+		if(root!=null) {
+			Grafo<Node>g=new Grafo<>();
+			g.addVertice(root);
+			Set<E> keys=nodes.keySet();
+			for(E ar:keys) {
+				g.addVertice(nodes.get(ar));
+			}
+			Comp comp=new Comp();
+			PriorityQueue<Arista>prQA=new PriorityQueue<>(comp);
+			int i=0;
+			while(i<amountVertices) {
+				List<Arista>aristas=root.getAd();
+				for(Arista ar:aristas) {
+					Node node=ar.getB();
+					if(node.getColor()!=Color.BLACK) {
+						prQA.add(ar);
+					}
+				}
+				Arista ar=prQA.poll();
+				if(ar!=null) {
+					Node node=ar.getB();
+					if(node.getColor()!=Color.BLACK) {
+						node.setColor(Color.BLACK);
+						g.addArista(ar.getA(), ar.getB(), ar.getW());
+						i++;
+						root=node;
+					}
+				}
+				
+			}
+			return g;
+		}
+		return null;
+		
+	}
+	
+	public Queue<Node> DFS(E s) {
+		Set<E>setNodes=nodes.keySet();
+		for(E key:setNodes) {
+			Node node=nodes.get(key);
+			node.setColor(Color.WHITE);
+			node.setDistance(0);
+			node.setPrev(null);
+		}
+		Node root=nodes.get(s);
+		Queue<Node>out=new LinkedList<>();
+		int time=-1;
+		out=DFS_Visite(root,time,out);
+		return out;
+	}
+	
+	public Queue<Node> DFS_Visite(Node n,int time,Queue<Node>out) {
+		n.setColor(Color.GRAY);
+		time+=1;
+		n.setDistance(time);
+		List<Arista>list=n.getAd();
+		out.add(n);
+		if(list!=null) {
+			for(Arista ar:list) {
+				Node node=ar.getB();
+				if(node.getColor()!=Color.BLACK) {
+					node.setPrev(n);
+					out=DFS_Visite(node,time,out);
+				}
+			}
+		}
+		n.setColor(Color.BLACK);
+		time+=1;
+		n.setF(time);
+		return out;
+	}
 	
 	public Queue<Node> dijkstra (E source) {
 		Queue<Node> out = new LinkedList<>();
 		Node root = nodes.get(source);
-		PriorityQueue<Node> queue = new PriorityQueue<>(50, new CompareToDistance());
+		PriorityQueue<Node> queue = new PriorityQueue<>(amountVertices, new CompareToDistance());
 		Collection<Node> v = nodes.values();
 		for(Node i:v) {
 			i.setDistance(Integer.MAX_VALUE);
@@ -205,7 +291,7 @@ public class Grafo<E> {
 			Node u = queue.poll();
 			out.add(u);
 			List<Arista> ad = u.getAd();
-			if(ad.size()>0) {
+			if(ad!=null) {
 				for(Arista i:ad) {
 					Node n = i.getB();
 					if (n.getDistance() > u.getDistance() + i.getW()) {
@@ -227,6 +313,7 @@ public class Grafo<E> {
 		private List<Arista> adyacentes;
 		private Color color;
 		private int distance;
+		private int f;
 		private Node previous;
 		
 		
@@ -277,6 +364,12 @@ public class Grafo<E> {
 		
 		public String toString() {
 			return "["+element.toString()+"]";
+		}
+		public int getF() {
+			return f;
+		}
+		public void setF(int f) {
+			this.f = f;
 		}
 		
 		
@@ -337,6 +430,15 @@ public class Grafo<E> {
 	
 	private enum Color{
 		WHITE,BLACK,GRAY;
+	}
+	
+	private class Comp implements Comparator<Arista>{
+
+		@Override
+		public int compare(Grafo<E>.Arista ar0, Grafo<E>.Arista ar1) {
+			return ar1.getW()-ar0.getW();
+		}
+		
 	}
 	
 }
