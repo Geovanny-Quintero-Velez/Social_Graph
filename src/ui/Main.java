@@ -10,6 +10,9 @@ public class Main {
 	static Scanner sc;
 	public static void main(String[] args) {
 		model=new Model();
+		model.readPeople();
+		model.readFollowers();
+		model.readFriends();
 		sc=new Scanner(System.in);
 		boolean flag=false;
 		int grafo=0;
@@ -60,6 +63,7 @@ public class Main {
 		for(String name:path) {
 			System.out.print(name+" ");
 		}
+		System.out.println();
 	}
 	
 

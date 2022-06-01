@@ -179,7 +179,7 @@ public class Model {
 			while (input.ready()) {
 				String names = input.readLine();
 				String[] follow = names.split(";");
-				addFollower(follow[0], follow[1]);
+				addFollower(follow[1], follow[0]);
 			}
 			input.close();
 			fr.close();
