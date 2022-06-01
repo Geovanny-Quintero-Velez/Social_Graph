@@ -2,6 +2,7 @@ package test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
 import java.util.Queue;
 
 import org.junit.jupiter.api.Test;
@@ -160,18 +161,43 @@ class GrafoTest {
 	@Test
 	void testDijstre() {
 		scenario1();
-		//g.dijkstra(null);
 		String a="1";
 		String b="2";
 		String c="3";
+		String d="4";
+		String e="5";
 		g.addVertice(a);
 		g.addVertice(b);
 		g.addVertice(c);
-		g.addArista(b, c,2);
-		g.addArista(b, c,1);
-		g.addArista(a, c,1);
-		g.addArista(c, b,2);
-		
+		g.addVertice(d);
+		g.addVertice(e);
+		g.addArista(a, b);
+		g.addArista(b, c);
+		g.addArista(c, d);
+		g.addArista(d, e);
+		ArrayList<String>expectedOut=new ArrayList<>();
+		expectedOut.add("1");
+		expectedOut.add("2");
+		expectedOut.add("3");
+		expectedOut.add("4");
+		expectedOut.add("5");
+		Queue<Grafo<String>.Node> nodes=g.dijkstra(a);
+		ArrayList<String>toTest=new ArrayList<>();
+		Grafo<String>.Node found=null;
+		for(Grafo<String>.Node node:nodes) {
+			if(node.get().equals(e)) {
+				found=node;
+				break;
+			}
+		}
+		while(found.getPrev()!=null) {
+			toTest.add(0,found.get());
+			found=found.getPrev();
+		}
+		toTest.add(0,found.get());
+		for(int i=0;i<toTest.size();i++) {
+			assertEquals(expectedOut.get(i),toTest.get(i));
+		}
 	}
 	
 	@Test

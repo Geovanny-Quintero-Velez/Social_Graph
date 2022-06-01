@@ -1,8 +1,12 @@
 package test;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.ArrayList;
 import java.util.Queue;
 import org.junit.jupiter.api.Test;
+
+import structures.Grafo;
 import structures.GrafoDM;
 
 class GrafoDMTest {
@@ -111,7 +115,44 @@ class GrafoDMTest {
 
 	@Test
 	void testDijkstra() {
-		fail("Not yet implemented");
+		scenario1();
+		String a="1";
+		String b="2";
+		String c="3";
+		String d="4";
+		String e="5";
+		g.addV(a);
+		g.addV(b);
+		g.addV(c);
+		g.addV(d);
+		g.addV(e);
+		g.addA(a, b);
+		g.addA(b, c);
+		g.addA(c, d);
+		g.addA(d, e);
+		ArrayList<String>expectedOut=new ArrayList<>();
+		expectedOut.add("1");
+		expectedOut.add("2");
+		expectedOut.add("3");
+		expectedOut.add("4");
+		expectedOut.add("5");
+		Queue<GrafoDM<String>.Node> nodes=g.dijkstra(a);
+		ArrayList<String>toTest=new ArrayList<>();
+		GrafoDM<String>.Node found=null;
+		for(GrafoDM<String>.Node node:nodes) {
+			if(node.get().equals(e)) {
+				found=node;
+				break;
+			}
+		}
+		while(found.getPrev()!=null) {
+			toTest.add(0,found.get());
+			found=found.getPrev();
+		}
+		toTest.add(0,found.get());
+		for(int i=0;i<toTest.size();i++) {
+			assertEquals(expectedOut.get(i),toTest.get(i));
+		}
 	}
 
 	@Test
