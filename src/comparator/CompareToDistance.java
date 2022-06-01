@@ -8,7 +8,7 @@ public class CompareToDistance implements Comparator<Node>{
 
 	@Override
 	public int compare(Node o1, Node o2) {
-		return o1.getDistance()-o2.getDistance();
+		return o2.getDistance() - o1.getDistance();
 	}
 
 	
