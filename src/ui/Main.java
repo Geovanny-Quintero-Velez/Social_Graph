@@ -1,44 +1,66 @@
 package ui;
 
-
-
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import model.Model;
 
-
 public class Main {
 	static Model model;
+	static Scanner sc;
 	public static void main(String[] args) {
-		String a="1";
-		String b="2";
-		String c="3";
-		String d="4";
-		String e="5";
 		model=new Model();
-		model.addPerson(a);
-		model.addPerson(b);
-		model.addPerson(c);
-		model.addPerson(d);
-		model.addPerson(e);
-		model.addFollower(a, e);
-		model.addFollower(b, e);
-		model.addFollower(c, e);
-		model.addFollower(d, e);
-		model.addFollower(c, a);
-		model.addFollower(d, a);
-		model.addFollower(a, b);
-		model.addFollower(b, a);
-		model.addFollower(c, a);
-		String greatL=model.getGreater(0);
-		String greatM=model.getGreater(1);
-		System.out.println(greatL);
-		System.out.println(greatM);
-		ArrayList<String>names=model.namesRoad(b, c, 1);
-		for(String name:names) {
-			System.out.println(name);
-		}
-		//ArrayList<String>list=
+		sc=new Scanner(System.in);
+		boolean flag=false;
+		int grafo=0;
+		do {
+			System.out.println("Seleccione");
+			System.out.println("1. Encontrar persona con más seguidores");
+			System.out.println("2. Buscar camino desde una persona a otra");
+			System.out.println("3. cambiar grafo");
+			System.out.println("0. Terminar");
+			int i=sc.nextInt();
+			sc.nextLine();
+			switch(i) {
+			case 1:
+				String greate=model.getGreater(grafo);
+				System.out.println(greate);
+				break;
+			case 2:
+				searchPath(grafo);
+				break;
+			case 3:
+				if(grafo==1) {
+					grafo=0;
+				}else if(grafo==0) {
+					grafo=1;
+				}
+				break;
+			case 0:
+				flag=true;
+				break;
+			}
+			
+		}while(!flag);
 		
 	}
+	
+	public static void searchPath(int graph) {
+		ArrayList<String>names=model.getNames();
+		for(int i=0;i<names.size();i++) {
+			System.out.println(i+" "+names.get(i));
+		}
+		System.out.println("Digite indice del origen");
+		int i1=sc.nextInt();
+		sc.nextLine();
+		System.out.println("Digite indice del Objetivo");
+		int i2=sc.nextInt();
+		sc.nextLine();
+		ArrayList<String>path=model.namesRoad(names.get(i1), names.get(i2), graph);
+		for(String name:path) {
+			System.out.print(name+" ");
+		}
+	}
+	
+
 }

@@ -13,12 +13,13 @@ public class Model {
 	private GrafoDM<String>gDs;
 	private Grafo<String>gLsAmigo;
 	private GrafoDM<String>gDsAmigo;
-	
+	private ArrayList<String>names;
 	public Model() {
 		gLs=new  Grafo<>();
 		gDs=new  GrafoDM<>();
 		gLsAmigo=new  Grafo<>();
 		gDsAmigo=new  GrafoDM<>();
+		names=new ArrayList<>();
 	}
 	
 	public Grafo<String> getgLs() {
@@ -38,6 +39,7 @@ public class Model {
 	}
 	
 	public void addPerson(String name) {
+		names.add(name);
 		gLs.addVertice(name);
 		gDs.addV(name);
 		gLsAmigo.addVertice(name);
@@ -122,5 +124,10 @@ public class Model {
 		}
 		return out;
 	}
+	
+	public ArrayList<String>getNames(){
+		return names;
+	}
+	
 	
 }
