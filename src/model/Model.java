@@ -1,5 +1,9 @@
 package model;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.Set;
@@ -129,5 +133,60 @@ public class Model {
 		return names;
 	}
 	
+	public void readPeople() {
+		try {
+			File file = new File(".\\src\\files\\names");
+			FileReader fr;
+			fr = new FileReader(file);
+			BufferedReader input = new BufferedReader(fr);
+			while (input.ready()) {
+				String name = input.readLine();
+				addPerson(name);
+			}
+			input.close();
+			fr.close();
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+	}
+	
+	public void readFriends() {
+		try {
+			File file = new File(".\\src\\files\\Amigos");
+			FileReader fr;
+			fr = new FileReader(file);
+			BufferedReader input = new BufferedReader(fr);
+			while (input.ready()) {
+				String names = input.readLine();
+				String[] friend = names.split(";");
+				addFriend(friend[0], friend[1]);
+			}
+			input.close();
+			fr.close();
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+	}
+	
+	public void readFollowers() {
+		try {
+			File file = new File(".\\src\\files\\vertices");
+			FileReader fr;
+			fr = new FileReader(file);
+			BufferedReader input = new BufferedReader(fr);
+			while (input.ready()) {
+				String names = input.readLine();
+				String[] follow = names.split(";");
+				addFollower(follow[0], follow[1]);
+			}
+			input.close();
+			fr.close();
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+	}
 	
 }
