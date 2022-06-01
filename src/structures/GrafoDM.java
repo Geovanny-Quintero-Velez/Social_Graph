@@ -9,7 +9,6 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 
-
 public class GrafoDM<E> {
 	private Hashtable<E,Node> table;
 	private Hashtable<Node,Hashtable<Node,List<Arista>>> matrix;
@@ -353,7 +352,40 @@ public class GrafoDM<E> {
 			return g;
 		}
 		return null;
-		
+	}
+	
+	public Hashtable<Node, Hashtable<Arista, Integer>> floydWarshall() {
+		Hashtable<Node, Hashtable<Arista, Integer>> distanceMatrix = new Hashtable<>(); 
+		Collection<Node> vertexes = table.values();
+		for(Node i:vertexes) {
+			Hashtable<Arista,Integer> distance = new Hashtable<Arista,Integer>();
+			for(Node k:vertexes) {	
+				if(i.equals(k) == true) {
+					distance.put(new Arista(i,k), 0);
+				}else if(isArista(i.get(),k.get()) == true) {
+					Arista ar = new Arista(i,k);
+					int num = getAdyacentes( i). indexOf(ar);
+					distance.put(ar, getAdyacentes( i).get(num).getW());
+				}else {
+					distance.put(new Arista(i,k), Integer.MAX_VALUE);
+				}
+			}
+			distanceMatrix.put(i, distance);
+		}
+		for(Node k:vertexes) {
+			for(Node i:vertexes) {
+				for(Node j:vertexes) {
+					Arista ij = new Arista(i,j);
+					Integer ijDistance = distanceMatrix.get(i).get(ij);
+					Integer ikDistance = distanceMatrix.get(i).get(new Arista(i,k));
+					Integer kjDistance = distanceMatrix.get(k).get(new Arista(k,j));
+					if(ijDistance > ikDistance + kjDistance) {
+						distanceMatrix.get(i).replace(ij, ikDistance + kjDistance);
+					}
+				}
+			}
+		}
+		return distanceMatrix;
 	}
 	
 	
