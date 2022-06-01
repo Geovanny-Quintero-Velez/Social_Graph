@@ -1,8 +1,11 @@
 package ui;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.Queue;
 
 import structures.Grafo;
+import structures.GrafoDM;
 
 public class Main {
 
@@ -12,26 +15,33 @@ public class Main {
 		String c="3";
 		String d="4";
 		String e="5";
-		Grafo<String> g=new Grafo<>();
-		g.addVertice(a);
-		g.addVertice(b);
-		g.addVertice(c);
-		g.addVertice(d);
-		g.addVertice(e);
-		g.addArista(a, b, 4);
-		g.addArista(b, a, 4);
-		g.addArista(b, c, 1);
-		g.addArista(c, b, 1);
-		g.addArista(c, d, 2);
-		g.addArista(d, c, 2);
-		g.addArista(e, c, 1);
-		g.addArista(a, e, 3);
-		g.addArista(c, e, 1);
-		g.addArista(e, a, 3);
-		Grafo<Grafo<String>.Node> toTest = g.prim("1");
+		GrafoDM<String> g=new GrafoDM<>();
+		g.addV(a);
+		g.addV(b);
+		g.addV(c);
+		g.addV(d);
+		g.addV(e);
+		g.addA(a, b, 4);
+		g.addA(b, a, 4);
+		g.addA(b, c, 1);
+		g.addA(c, b, 1);
+		g.addA(c, d, 2);
+		g.addA(d, c, 2);
+		g.addA(e, c, 1);
+		g.addA(c, e, 1);
+		g.addA(a, e, 3);
+		g.addA(e, a, 3);
+		GrafoDM<String> toTest = g.prim("1");
 		for(int i=1;i<6;i++) {
-			Grafo<Grafo<String>.Node>.Node node=toTest.getVert(g.getVert(i+""));
-			System.out.println(node.get()+" "+node.getDistance());
+			GrafoDM<String>.Node node=toTest.getVert(i+"");
+			while(node.getPrev()!=null) {
+				System.out.print(node+" ");
+				node=node.getPrev();
+			}
+			System.out.print("Node:"+node.get());
+			System.out.println();
 		}
+		System.out.println(toTest.size());
+		
 	}
 }

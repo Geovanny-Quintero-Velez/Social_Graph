@@ -160,7 +160,7 @@ class GrafoTest {
 	@Test
 	void testDijstre() {
 		scenario1();
-		g.dijkstra(null);
+		//g.dijkstra(null);
 		String a="1";
 		String b="2";
 		String c="3";
@@ -172,6 +172,40 @@ class GrafoTest {
 		g.addArista(a, c,1);
 		g.addArista(c, b,2);
 		
+	}
+	
+	@Test
+	void testPrim() {
+		String a="1";
+		String b="2";
+		String c="3";
+		String d="4";
+		String e="5";
+		Grafo<String> g=new Grafo<>();
+		g.addVertice(a);
+		g.addVertice(b);
+		g.addVertice(c);
+		g.addVertice(d);
+		g.addVertice(e);
+		g.addArista(a, b, 4);
+		g.addArista(b, a, 4);
+		g.addArista(b, c, 1);
+		g.addArista(c, b, 1);
+		g.addArista(c, d, 2);
+		g.addArista(d, c, 2);
+		g.addArista(e, c, 1);
+		g.addArista(c, e, 1);
+		g.addArista(a, e, 3);
+		g.addArista(e, a, 3);
+		Grafo<String> toTest = g.prim("1");
+		for(int i=1;i<6;i++) {
+			Grafo<String>.Node node=toTest.getVert(i+"");
+			while(node.getPrev()!=null) {
+				node=node.getPrev();
+			}
+			assertEquals("1",node.get());
+		}
+		assertEquals(5,toTest.size());
 	}
 
 }

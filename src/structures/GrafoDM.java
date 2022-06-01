@@ -1,9 +1,11 @@
 package structures;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 
@@ -20,8 +22,16 @@ public class GrafoDM<E> {
 		numNodes=0;
 	}
 	
+	public int verticesAmount() {
+		return numNodes;
+	}
+	
+	public int aristasAmount() {
+		return numAristas;
+	}
+	
 	public int size() {
-		return matrix.size();
+		return table.size();
 	}
 	
 	public void addV(E e1) {
@@ -48,6 +58,10 @@ public class GrafoDM<E> {
 			return true;
 		}
 		return false;
+	}
+	
+	public Node getVert(E e1) {
+		return table.get(e1);
 	}
 	
 	public List<E> getAdyacentes(E e1) {
@@ -181,14 +195,18 @@ public class GrafoDM<E> {
 	public boolean removeV(E e1) {
 		Node n1=table.get(e1);
 		if(n1!=null) {
+			int num=matrix.get(n1).keySet().size();
+			numAristas-=num;
 			table.remove(e1);
 			matrix.remove(n1);
 			Set<Node> nodes=matrix.keySet();
 			for(Node node:nodes) {
 				Hashtable<Node,List<Arista>> column=matrix.get(node);
-				column.remove(n1);
-				numNodes--;
+				if(column.remove(n1) != null) {
+					numAristas--;
+				}
 			}
+			numNodes--;
 			return true;
 		}
 		return false;
@@ -227,8 +245,118 @@ public class GrafoDM<E> {
         }
         return out;
     }
-
-
+	
+	public Queue<Node> DFS(E s) {
+		Set<E>setNodes=table.keySet();
+		for(E key:setNodes) {
+			Node node=table.get(key);
+			node.setColor(Color.WHITE);
+			node.setDistance(0);
+			node.setPrev(null);
+		}
+		Node root=table.get(s);
+		Queue<Node>out=new LinkedList<>();
+		int time=-1;
+		out=DFS_Visite(root,time,out);
+		return out;
+	}
+	
+	public Queue<Node> DFS_Visite(Node n,int time,Queue<Node>out) {
+		n.setColor(Color.GRAY);
+		time+=1;
+		n.setDistance(time);
+		List<Arista>list=getAdyacentes(n);
+		out.add(n);
+		if(list!=null) {
+			for(Arista ar:list) {
+				Node node=ar.getB();
+				if(node.getColor()!=Color.BLACK) {
+					node.setPrev(n);
+					out=DFS_Visite(node,time,out);
+				}
+			}
+		}
+		n.setColor(Color.BLACK);
+		time+=1;
+		n.setF(time);
+		return out;
+	}
+	
+	public Queue<Node> dijkstra (E source) {
+		Queue<Node> out = new LinkedList<>();
+		Node root = table.get(source);
+		PriorityQueue<Node> queue = new PriorityQueue<Node>(new CompareToDistance());
+		Collection<Node> v = table.values();
+		for(Node i:v) {
+			i.setDistance(Integer.MAX_VALUE);
+			i.setPrev(null);
+		}
+		root.setDistance(0);
+		queue.add(root);
+		while(queue.isEmpty() == false) {
+			Node u = queue.poll();
+			out.add(u);
+			List<Arista> ad =getAdyacentes(u);
+			if(ad!=null) {
+				for(Arista i:ad) {
+					Node n = i.getB();
+					if (n.getDistance() > u.getDistance() + i.getW()) {
+						n.setDistance(u.getDistance() + i.getW());
+						n.setPrev(u);
+						queue.add(n);
+					}
+				}
+			}
+			
+		}
+		return out;
+	}
+	
+	public GrafoDM<E> prim(E s) {
+		Node root=table.get(s);
+		if(root!=null) {
+			GrafoDM<E>g=new GrafoDM<>();
+			g.addV(root.get());
+			Set<E> keys=table.keySet();
+			for(E ar:keys) {
+				g.addV(table.get(ar).get());
+			}
+			Comp comp=new Comp();
+			PriorityQueue<Arista>prQA=new PriorityQueue<>(comp);
+			int i=1;
+			while(i<numNodes) {
+				List<Arista>aristas=getAdyacentes(root);
+				for(Arista ar:aristas) {
+					Node node=ar.getB();
+					if(node.getColor()!=Color.BLACK) {
+						prQA.add(ar);
+					}
+				}
+				root.setColor(Color.BLACK);
+				Arista ar=prQA.poll();
+				if(ar!=null) {
+					Node node=ar.getB();
+					if(node.getColor()!=Color.BLACK) {
+						node.setColor(Color.BLACK);
+						g.addA(ar.getA().get(), ar.getB().get(), ar.getW());
+						g.addA(ar.getB().get(), ar.getA().get(), ar.getW());
+						Node a=g.getVert(ar.getA().get());
+						Node b=g.getVert(ar.getB().get());
+						b.setDistance(a.getDistance()+ar.getW());
+						b.setPrev(a);
+						i++;
+						root=node;
+					}
+				}
+				
+			}
+			return g;
+		}
+		return null;
+		
+	}
+	
+	
 	@SuppressWarnings("unused")
 	private class Arista implements Comparable<Arista>{
 		Node a;
@@ -282,44 +410,77 @@ public class GrafoDM<E> {
 	private enum Color{
 		WHITE,BLACK,GRAY;
 	}
-	@SuppressWarnings("unused")
-	private class Node{
+	public class Node{
 		private E element;
-		private int value;
 		private Color color;
+		private int distance;
+		private int f;
+		private Node previous;
 		
 		
-		public void setColor(Color color) {
-			this.color=color;
+		public Node() {
+			color=Color.WHITE;
 		}
+		public Node(E element) {
+			this.element=element;
+		}
+		
+		public E get() {
+			return element;
+		}
+		
 		
 		public Color getColor() {
 			return color;
 		}
+		
+		public void setColor(Color color) {
+			this.color = color;
+		}
+		
+		public void setDistance(int distance) {
+			this.distance = distance;
+		}
+		public int getDistance() {
+			return distance;
+		}
+		
+		public void setPrev(Node previous) {
+			this.previous = previous;
+		}
+		public Node getPrev() {
+			return previous;
+		}
+		
+		public String toString() {
+			return "["+element.toString()+"]";
+		}
+		public int getF() {
+			return f;
+		}
+		public void setF(int f) {
+			this.f = f;
+		}
+		
+		
+	}
+	
+	private class Comp implements Comparator<Arista>{
 
-		public Node(E element) {
-			this.setElement(element);
-			color = Color.WHITE;
+		@Override
+		public int compare(Arista ar0, Arista ar1) {
+			return ar1.getW()-ar0.getW();
 		}
 		
-		public Node(E element,int value) {
-			this.setElement(element);
-			color = Color.WHITE;
-			this.value=value;
+	}
+	
+	private class CompareToDistance implements Comparator<Node>{
+
+		@Override
+		public int compare(Node o1, Node o2) {
+			return o2.getDistance() - o1.getDistance();
 		}
-		public E get() {
-			return element;
-		}
-		public void setElement(E element) {
-			this.element = element;
-		}
+
 		
-		public void setValue(int value) {
-			this.value=value;
-		}
-		
-		public int getValue() {
-			return value;
-		}
 	}
 }
