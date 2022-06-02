@@ -51,7 +51,7 @@ public class Main {
 	public static void searchPath(int graph) {
 		ArrayList<String>names=model.getNames();
 		for(int i=0;i<names.size();i++) {
-			System.out.println((i+1)+" "+names.get(i));
+			System.out.println((i+1)+". "+names.get(i));
 		}
 		System.out.println("Digite indice del origen");
 		int i1=sc.nextInt();
