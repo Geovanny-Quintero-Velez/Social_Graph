@@ -202,12 +202,12 @@ class GrafoTest {
 	
 	@Test
 	void testPrim() {
+		scenario1();
 		String a="1";
 		String b="2";
 		String c="3";
 		String d="4";
 		String e="5";
-		Grafo<String> g=new Grafo<>();
 		g.addVertice(a);
 		g.addVertice(b);
 		g.addVertice(c);
