@@ -27,7 +27,7 @@ public class Main {
 			switch(i) {
 			case 1:
 				String greate=model.getGreater(grafo);
-				System.out.println(greate);
+				System.out.println("La persona con más seguidores es "+greate);
 				break;
 			case 2:
 				searchPath(grafo);
@@ -51,7 +51,7 @@ public class Main {
 	public static void searchPath(int graph) {
 		ArrayList<String>names=model.getNames();
 		for(int i=0;i<names.size();i++) {
-			System.out.println((i+1)+" "+names.get(i));
+			System.out.println((i+1)+". "+names.get(i));
 		}
 		System.out.println("Digite indice del origen");
 		int i1=sc.nextInt();
@@ -59,6 +59,7 @@ public class Main {
 		System.out.println("Digite indice del Objetivo");
 		int i2=sc.nextInt();
 		sc.nextLine();
+		System.out.println("El camino es");
 		ArrayList<String>path=model.namesRoad(names.get(i1-1), names.get(i2-1), graph);
 		for(String name:path) {
 			System.out.print(name+" ");
